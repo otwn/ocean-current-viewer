@@ -1,0 +1,57 @@
+html,
+body,
+#map {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#map {
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.awesome-marker i {
+    font-size: 18px;
+    margin-top: 8px;
+}
+
+.station-div-icon {
+    width: 10px !important;
+    height: 10px !important;
+    background: white;
+    border: 1px solid rgba(240, 240, 240, 0.5);
+    color: blue;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 50%;
+    line-height: 50px;
+    opacity: 0.7;
+}
+
+.currents-div-icon {
+    background: red;
+    border: 1px solid rgba(240, 240, 240, 0.5);
+    color: blue;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 50%;
+    line-height: 50px;
+    opacity: 0.8;
+}
+
+.single-station-div-icon {
+    background: yellow;
+    border: 1px solid rgba(240, 240, 240, 0.5);
+    color: blue;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 50%;
+    line-height: 60px;
+    opacity: 0.9;
+    z-index: 350 !important;
+}
