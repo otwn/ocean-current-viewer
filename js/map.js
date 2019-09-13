@@ -39,24 +39,6 @@
   // ================================================================
   // Ancillary Data Layers - Top Corner Layers Group
   // ================================================================
-  var windESRI = L.esri.dynamicMapLayer({
-    url:
-      "https://utility.arcgis.com/usrsvcs/servers/f986fb492f2347d8b077df0236229db0/rest/services/LiveFeeds/NOAA_METAR_current_wind_speed_direction/MapServer",
-    opacity: 0.8,
-    f: "image/png"
-  });
-
-  var activeHurricaneESRI = L.esri.dynamicMapLayer({
-    url:
-      "https://utility.arcgis.com/usrsvcs/servers/6c6699e853424b22a8618f00d8e0cf81/rest/services/LiveFeeds/Hurricane_Active/MapServer",
-    f: "image/png"
-  });
-
-  var recentHurricaneESRI = L.esri.dynamicMapLayer({
-    url:
-      "https://utility.arcgis.com/usrsvcs/servers/c10892ebdbf8428e939f601c2acae7e4/rest/services/LiveFeeds/Hurricane_Recent/MapServer",
-    f: "image/png"
-  });
 
   var nrl26cIsotherm = L.tileLayer
     .wms("http://gcoos-mdv.gcoos.org:8080/ncWMS/wms", {
@@ -85,18 +67,16 @@
     className: "station-div-icon"
   });
 
-  var gcoosAssets = L.esri
-    .featureLayer({
-      url:
-        "https://gis.gcoos.org/arcgis/rest/services/Stations/The_GCOOS_Region/FeatureServer/0",
-      pointToLayer: function(feature, latlng) {
-        return L.marker(latlng, {
-          icon: stationIcon,
-          riseOnHover: true
-        });
-      }
-    })
-    .addTo(map);
+  var gcoosAssets = L.esri.featureLayer({
+    url:
+      "https://gis.gcoos.org/arcgis/rest/services/Stations/The_GCOOS_Region/FeatureServer/0",
+    pointToLayer: function(feature, latlng) {
+      return L.marker(latlng, {
+        icon: stationIcon,
+        riseOnHover: true
+      });
+    }
+  });
   gcoosAssets.bindPopup(function(layer) {
     return L.Util.template(
       "<h2>{station}</h2><h3>{organization}</h3>" +
@@ -134,43 +114,12 @@
     );
   });
 
-  var singleStationIcon = L.divIcon({
-    className: "single-station-div-icon"
-  });
-  var result = L.esri
-    .query({
-      url:
-        "https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/GCOOS_Assets_2019_Unique_Stations/FeatureServer/0"
-    })
-    .where("station='42395'")
-    .run(function(error, oneStation) {
-      var singleStation = L.geoJSON(oneStation, {
-        pointToLayer: function(feature, latlng) {
-          return L.marker(latlng, {
-            icon: singleStationIcon
-          });
-        }
-      }).addTo(map);
-      singleStation.bindPopup(function(layer) {
-        return L.Util.template(
-          "<h1>{station}</h1><h2>{organization}</h2>" +
-            "<table>" +
-            "<tr><td>URN: </td><td>{urn}</td></tr>" +
-            "<tr><td>Description: </td><td>{description}</td></tr>" +
-            "</table>",
-          layer.feature.properties
-        );
-      });
-    });
-
   // ================================================================
   /* grouping ancillary data layers */
   // ================================================================
   const groupedOverlay = {
     "GCOOS Assets 2019": gcoosAssets,
     "ADCP Stations": adcpStations,
-    "Active Hurricane": activeHurricaneESRI,
-    "Wind Speed": windESRI,
     "NRL Depth 26C Isotherm<a href='http://gcoos-mdv.gcoos.org:8080/ncWMS/godiva2.html?layer=NRL_MEAN/Isotherm&bbox=-98.0,18.0,-79.5145715943338,30.96001434326172' target='_blank'>**</a>": nrl26cIsotherm,
     "Sea Surface Height<a href='http://gcoos-mdv.gcoos.org:8080/ncWMS/godiva2.html?layer=EDDY_SSH/ssh&bbox=-180.0,-66.0,180.0,66.0' target='_blank'>**</a>": ssh,
     "NOAA NWS NCEP Global Real-Time Ocean Forecast System (RTOFS)": currentsNOAA
