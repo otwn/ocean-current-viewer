@@ -51,8 +51,7 @@
       url:
         "https://utility.arcgis.com/usrsvcs/servers/6c6699e853424b22a8618f00d8e0cf81/rest/services/LiveFeeds/Hurricane_Active/MapServer",
       f: "image/png"
-    })
-    .addTo(map);
+    });
 
   var recentHurricaneESRI = L.esri.dynamicMapLayer({
     url:
@@ -87,26 +86,27 @@
     className: "station-div-icon"
   });
 
-  var gcoosAssets = L.esri.featureLayer({
-    url:
-      "https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/GCOOS_Assets_2019_Unique_Stations/FeatureServer/0",
-    pointToLayer: function(feature, latlng) {
-      return L.marker(latlng, {
-        icon: stationIcon,
-        riseOnHover: true
+  var gcoosAssets = L.esri
+    .featureLayer({
+     url:"https://gis.gcoos.org/arcgis/rest/services/Stations/The_GCOOS_Region/FeatureServer/0",
+     pointToLayer: function(feature, latlng) {
+        return L.marker(latlng, {
+          icon: stationIcon,
+           riseOnHover: true
+            });
+          }
+       }).addTo(map);
+      gcoosAssets.bindPopup(function(layer) {
+        return L.Util.template(
+         "<h2>{station}</h2><h3>{organization}</h3>" +
+            "<table>" +
+            "<tr><td>URN: </td><td>{urn}</td></tr>" +
+            "<tr><td>Description: </td><td>{description}</td></tr>" +
+           "</table>",
+          layer.feature.properties
+        );
       });
-    }
-  });
-  gcoosAssets.bindPopup(function(layer) {
-    return L.Util.template(
-      "<h1>{station}</h1><h2>{organization}</h2>" +
-        "<table>" +
-        "<tr><td>URN: </td><td>{urn}</td></tr>" +
-        "<tr><td>Description: </td><td>{description}</td></tr>" +
-        "</table>",
-      layer.feature.properties
-    );
-  });
+
 
   var currentsIcon = L.divIcon({
     className: "currents-div-icon"
