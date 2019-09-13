@@ -23,7 +23,7 @@ body,
 .station-div-icon {
     width: 10px !important;
     height: 10px !important;
-    background: white;
+    background: yellowgreen;
     border: 1px solid rgba(240, 240, 240, 0.5);
     color: blue;
     font-weight: bold;

@@ -46,12 +46,11 @@
     f: "image/png"
   });
 
-  var activeHurricaneESRI = L.esri
-    .dynamicMapLayer({
-      url:
-        "https://utility.arcgis.com/usrsvcs/servers/6c6699e853424b22a8618f00d8e0cf81/rest/services/LiveFeeds/Hurricane_Active/MapServer",
-      f: "image/png"
-    });
+  var activeHurricaneESRI = L.esri.dynamicMapLayer({
+    url:
+      "https://utility.arcgis.com/usrsvcs/servers/6c6699e853424b22a8618f00d8e0cf81/rest/services/LiveFeeds/Hurricane_Active/MapServer",
+    f: "image/png"
+  });
 
   var recentHurricaneESRI = L.esri.dynamicMapLayer({
     url:
@@ -88,25 +87,26 @@
 
   var gcoosAssets = L.esri
     .featureLayer({
-     url:"https://gis.gcoos.org/arcgis/rest/services/Stations/The_GCOOS_Region/FeatureServer/0",
-     pointToLayer: function(feature, latlng) {
+      url:
+        "https://gis.gcoos.org/arcgis/rest/services/Stations/The_GCOOS_Region/FeatureServer/0",
+      pointToLayer: function(feature, latlng) {
         return L.marker(latlng, {
           icon: stationIcon,
-           riseOnHover: true
-            });
-          }
-       }).addTo(map);
-      gcoosAssets.bindPopup(function(layer) {
-        return L.Util.template(
-         "<h2>{station}</h2><h3>{organization}</h3>" +
-            "<table>" +
-            "<tr><td>URN: </td><td>{urn}</td></tr>" +
-            "<tr><td>Description: </td><td>{description}</td></tr>" +
-           "</table>",
-          layer.feature.properties
-        );
-      });
-
+          riseOnHover: true
+        });
+      }
+    })
+    .addTo(map);
+  gcoosAssets.bindPopup(function(layer) {
+    return L.Util.template(
+      "<h2>{station}</h2><h3>{organization}</h3>" +
+        "<table>" +
+        "<tr><td>URN: </td><td>{urn}</td></tr>" +
+        "<tr><td>Description: </td><td>{description}</td></tr>" +
+        "</table>",
+      layer.feature.properties
+    );
+  });
 
   var currentsIcon = L.divIcon({
     className: "currents-div-icon"
@@ -169,7 +169,6 @@
   const groupedOverlay = {
     "GCOOS Assets 2019": gcoosAssets,
     "ADCP Stations": adcpStations,
-
     "Active Hurricane": activeHurricaneESRI,
     "Wind Speed": windESRI,
     "NRL Depth 26C Isotherm<a href='http://gcoos-mdv.gcoos.org:8080/ncWMS/godiva2.html?layer=NRL_MEAN/Isotherm&bbox=-98.0,18.0,-79.5145715943338,30.96001434326172' target='_blank'>**</a>": nrl26cIsotherm,
