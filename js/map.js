@@ -114,6 +114,36 @@
     );
   });
 
+  var singleStationIcon = L.divIcon({
+    className: "single-station-div-icon"
+  });
+  var singleStation = [];
+  var resultLayer = L.esri
+    .query({
+      url:
+        "https://gis.gcoos.org/arcgis/rest/services/Stations/The_GCOOS_Region/FeatureServer/0"
+    })
+    .where("station='42395'")
+    .run(function(error, oneStation) {
+      singleStation = L.geoJSON(oneStation, {
+        pointToLayer: function(feature, latlng) {
+          return L.marker(latlng, {
+            icon: singleStationIcon
+          });
+        }
+      }).addTo(map);
+      singleStation.bindPopup(function(layer) {
+        return L.Util.template(
+          "<h1>{station}</h1><h2>{organization}</h2>" +
+            "<table>" +
+            "<tr><td>URN: </td><td>{urn}</td></tr>" +
+            "<tr><td>Description: </td><td>{description}</td></tr>" +
+            "</table>",
+          layer.feature.properties
+        );
+      });
+    });
+
   // ================================================================
   /* grouping ancillary data layers */
   // ================================================================
