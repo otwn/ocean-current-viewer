@@ -149,6 +149,36 @@
       "https://utility.arcgis.com/usrsvcs/servers/c10892ebdbf8428e939f601c2acae7e4/rest/services/LiveFeeds/Hurricane_Recent/MapServer",
     f: "image/png",
   });
+  recentHurricaneESRI.bindPopup(function (error, featureCollection) {
+    if (error || featureCollection.features.length === 0) {
+      return false;
+    } else {
+      console.log(featureCollection);
+      ppt = featureCollection.features[2].properties;
+      popup =
+        "Name: " +
+        ppt.STORMNAME +
+        "<br>" +
+        "Storm Type: " +
+        ppt.STORMTYPE +
+        "<br>" +
+        "Storm ID: " +
+        ppt.STORMID +
+        "<br>" +
+        "Date: " +
+        ppt.DTG +
+        "<br>" +
+        "Intensity: " +
+        ppt.INTENSITY +
+        "<br>" +
+        "Latitude/Longitude: " +
+        ppt.LAT +
+        "/" +
+        ppt.LON +
+        "<br>";
+      return popup;
+    }
+  });
 
   var histHurricaneTrack = L.esri.featureLayer({
     url:
@@ -300,7 +330,7 @@
     "Gulf of Mexico Coastal Ocean Observation System": gcoosAssets,
     "Stones MetOcean Observatory": stonesDataLayer,
     "Current Hurricane": activeHurricaneESRI,
-    "Recent Hurricane": recentHurricaneESRI,
+    "Recent Hurricanes/Tropical Storms": recentHurricaneESRI,
     "Historic Hurricane Track: H4(Yellow), H5(Red)": histHurricaneTrack,
     "NOAA NWS NCEP Global Real-Time Ocean Forecast System (RTOFS)": currentsNOAA,
   };
