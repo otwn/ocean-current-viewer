@@ -8,6 +8,7 @@
     //scrollWheelZoom: false,
     zoom: 6,
     center: [25.7, -89.8],
+    // drawControl: true,
     // timeDimension: true,
     // timeDimensionOptions: {
     //   timeInterval:
@@ -137,16 +138,48 @@
   // });
 
   var activeHurricaneESRI = L.esri.dynamicMapLayer({
-    url:
-      "https://utility.arcgis.com/usrsvcs/servers/6c6699e853424b22a8618f00d8e0cf81/rest/services/LiveFeeds/Hurricane_Active/MapServer",
+    url: "https://utility.arcgis.com/usrsvcs/servers/6c6699e853424b22a8618f00d8e0cf81/rest/services/LiveFeeds/Hurricane_Active/MapServer",
     f: "image/png",
     transparent: true,
     opacity: 0.7,
   });
+  activeHurricaneESRI.bindPopup(function (error, featureCollection) {
+    if (error || featureCollection.features.length === 0) {
+      return false;
+    } else {
+      console.log(featureCollection);
+      ppt = featureCollection.features[2].properties;
+      popup =
+        "Name: " +
+        ppt.STORMNAME +
+        "<br>" +
+        "Storm Type: " +
+        ppt.STORMTYPE +
+        "<br>" +
+        "Storm ID: " +
+        ppt.STORMID +
+        "<br>" +
+        "Date: " +
+        ppt.DTG +
+        "<br>" +
+        "Intensity: " +
+        ppt.INTENSITY +
+        " knots<br>" +
+        ppt.INTENSITY * 1.151 +
+        " mph/ " +
+        ppt.INTENSITY * 1.852 +
+        " kmh <br>" +
+        "Latitude/Longitude: " +
+        ppt.LAT +
+        "/" +
+        ppt.LON +
+        "<br>";
+      return popup;
+    }
+  });
 
   var recentHurricaneESRI = L.esri.dynamicMapLayer({
-    url:
-      "https://utility.arcgis.com/usrsvcs/servers/c10892ebdbf8428e939f601c2acae7e4/rest/services/LiveFeeds/Hurricane_Recent/MapServer",
+    url: "https://utility.arcgis.com/usrsvcs/servers/c10892ebdbf8428e939f601c2acae7e4/rest/services/LiveFeeds/Hurricane_Recent/MapServer",
     f: "image/png",
   });
   recentHurricaneESRI.bindPopup(function (error, featureCollection) {
@@ -170,7 +203,11 @@
         "<br>" +
         "Intensity: " +
         ppt.INTENSITY +
-        "<br>" +
+        " knots<br>" +
+        ppt.INTENSITY * 1.151 +
+        " mph/ " +
+        ppt.INTENSITY * 1.852 +
+        " kmh <br>" +
         "Latitude/Longitude: " +
         ppt.LAT +
         "/" +
@@ -181,8 +218,7 @@
   });
 
   var histHurricaneTrack = L.esri.featureLayer({
-    url:
-      "https://services1.arcgis.com/VAI453sU9tG9rSmh/arcgis/rest/services/Historic_Major_Hurricane_Tracks/FeatureServer/0",
+    url: "https://services1.arcgis.com/VAI453sU9tG9rSmh/arcgis/rest/services/Historic_Major_Hurricane_Tracks/FeatureServer/0",
     where: "wmo_wind > 95",
     style: function (feature) {
       var c,
@@ -215,16 +251,14 @@
   });
 
   var currentsNOAA = L.esri.dynamicMapLayer({
-    url:
-      "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/guidance_model_ocean_grtofs_time/MapServer",
+    url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/guidance_model_ocean_grtofs_time/MapServer",
   });
 
   var stationIcon = L.divIcon({
     className: "station-div-icon",
   });
   var gcoosAssets = L.esri.featureLayer({
-    url:
-      "https://gis.gcoos.org/arcgis/rest/services/Stations/The_GCOOS_Region/FeatureServer/0",
+    url: "https://gis.gcoos.org/arcgis/rest/services/Stations/The_GCOOS_Region/FeatureServer/0",
     pointToLayer: function (feature, latlng) {
       return L.marker(latlng, {
         icon: stationIcon,
@@ -235,10 +269,10 @@
   gcoosAssets.bindPopup(function (layer) {
     return L.Util.template(
       "<h2>{station}</h2><h3>{organization}</h3>" +
-        "<table>" +
-        "<tr><td>URN: </td><td>{urn}</td></tr>" +
-        "<tr><td>Description: </td><td>{description}</td></tr>" +
-        "</table>",
+      "<table>" +
+      "<tr><td>URN: </td><td>{urn}</td></tr>" +
+      "<tr><td>Description: </td><td>{description}</td></tr>" +
+      "</table>",
       layer.feature.properties
     );
   });
@@ -248,8 +282,7 @@
   });
   var adcpStations = L.esri
     .featureLayer({
-      url:
-        "https://services1.arcgis.com/qr14biwnHA6Vis6l/ArcGIS/rest/services/Gulf_Ocean_Currents_Observing_Stations/FeatureServer/0",
+      url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/ArcGIS/rest/services/Gulf_Ocean_Currents_Observing_Stations/FeatureServer/0",
       pointToLayer: function (feature, latlng) {
         return L.marker(latlng, {
           icon: currentsIcon,
@@ -261,10 +294,10 @@
   adcpStations.bindPopup(function (layer) {
     return L.Util.template(
       "<h1>{station}</h1><h2>{organization}</h2>" +
-        "<table>" +
-        "<tr><td>URN: </td><td>{urn}</td></tr>" +
-        "<tr><td>Description: </td><td>{description}</td></tr>" +
-        "</table>",
+      "<table>" +
+      "<tr><td>URN: </td><td>{urn}</td></tr>" +
+      "<tr><td>Description: </td><td>{description}</td></tr>" +
+      "</table>",
       layer.feature.properties
     );
   });
@@ -298,8 +331,7 @@
   //     });
   //   });
   var stonesDataLayer = L.esri.featureLayer({
-    url:
-      "https://services1.arcgis.com/qr14biwnHA6Vis6l/ArcGIS/rest/services/Gulf_Ocean_Currents_Observing_Stations/FeatureServer/0",
+    url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/ArcGIS/rest/services/Gulf_Ocean_Currents_Observing_Stations/FeatureServer/0",
     pointToLayer: function (feature, latlng) {
       return L.marker(latlng, {
         icon: singleStationIcon,
@@ -312,12 +344,12 @@
   stonesDataLayer.bindPopup(function (layer) {
     return L.Util.template(
       "<h1>{station}</h1><h2>{organization}</h2>" +
-        "<table>" +
-        "<tr><td>URN: </td><td>{urn}</td></tr>" +
-        "<tr><td>Description: </td><td>{description}</td></tr>" +
-        "</table>" +
-        "<br>" +
-        "<a href='https://stonesdata.tamucc.edu/browse_atm.php' target='_blank'>Stones MetOcean Observatory</a>",
+      "<table>" +
+      "<tr><td>URN: </td><td>{urn}</td></tr>" +
+      "<tr><td>Description: </td><td>{description}</td></tr>" +
+      "</table>" +
+      "<br>" +
+      "<a href='https://stonesdata.tamucc.edu/browse_atm.php' target='_blank'>Stones MetOcean Observatory</a>",
       layer.feature.properties
     );
   });
@@ -342,6 +374,26 @@
     .addTo(map);
   // Full screen control
   map.addControl(new L.Control.Fullscreen());
+
+  var drawnItems = new L.FeatureGroup();
+  map.addLayer(drawnItems);
+  var drawControl = new L.Control.Draw({
+    edit: {
+      featureGroup: drawnItems
+    },
+    draw: {
+      polyline: {
+        metric: false,
+        feet: false,
+      },
+      polygon: false,
+      rectangle: false,
+      circle: false,
+      marker: false
+    },
+
+  });
+  map.addControl(drawControl);
 
   // Hycom Ocean Current
   function addHycom() {
