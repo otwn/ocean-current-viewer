@@ -43,11 +43,11 @@
   var esriImage = L.layerGroup([
     L.esri.basemapLayer("Imagery"),
     L.esri.basemapLayer("ImageryLabels"),
-  ]);
+  ]).addTo(map);
   var esriImageFirefly = L.layerGroup([
     L.esri.basemapLayer("ImageryFirefly"),
     L.esri.basemapLayer("ImageryLabels"),
-  ]).addTo(map);
+  ]);
 
   // ================================================================
   /* grouping basemap layers */
@@ -340,7 +340,6 @@
     },
   });
   stonesDataLayer.setWhere("station='42395'");
-  stonesDataLayer.addTo(map);
   stonesDataLayer.bindPopup(function (layer) {
     return L.Util.template(
       "<h1>{station}</h1><h2>{organization}</h2>" +
@@ -353,6 +352,7 @@
       layer.feature.properties
     );
   });
+  stonesDataLayer.addTo(map);
 
   // ================================================================
   /* grouping ancillary data layers */

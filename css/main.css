@@ -15,11 +15,6 @@ body,
     left: 0;
 }
 
-.awesome-marker i {
-    font-size: 18px;
-    margin-top: 8px;
-}
-
 .station-div-icon {
     width: 10px !important;
     height: 10px !important;
@@ -34,7 +29,7 @@ body,
 }
 
 .currents-div-icon {
-    background: red;
+    background: orangered;
     border: 1px solid rgba(240, 240, 240, 0.5);
     color: blue;
     font-weight: bold;
@@ -53,5 +48,5 @@ body,
     border-radius: 50%;
     line-height: 60px;
     opacity: 1;
-    z-index: 550 !important;
+    /* z-index: 550 !important; */
 }
