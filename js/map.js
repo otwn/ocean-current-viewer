@@ -4,8 +4,8 @@
   console.log(moment(endDate).format());
 
   var map = L.map("map", {
-    zoomControl: false,
-    //scrollWheelZoom: false,
+    zoomControl: true,
+    scrollWheelZoom: false,
     zoom: 6,
     center: [25.7, -89.8],
     // drawControl: true,
@@ -48,7 +48,14 @@
     L.esri.basemapLayer("ImageryFirefly"),
     L.esri.basemapLayer("ImageryLabels"),
   ]);
-
+  const googleRoads = L.gridLayer
+      .googleMutant({
+      type: "roadmap" // valid values are 'roadmap', 'satellite', 'terrain' and 'hybrid'
+      });
+  const googleHybrid = L.gridLayer
+      .googleMutant({
+      type: "hybrid"
+      });
   // ================================================================
   /* grouping basemap layers */
   // ================================================================
@@ -58,6 +65,8 @@
     Imagery: esriImage,
     "Imagery(Firefly)": esriImageFirefly,
     "Dark Gray": darkGray,
+    "Google Road": googleRoads,
+    "Google Hybrid": googleHybrid
   };
   // ================================================================
   // Ancillary Data Layers - Top Corner Layers Group
@@ -136,6 +145,11 @@
   //   cacheForward: 25,
   //   updateTimeDimension: false,
   // });
+
+  var activeHurricane = L.esri.dynamicMapLayer({
+    url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
+    opacity: 0.9
+  });
 
   var activeHurricaneESRI = L.esri.dynamicMapLayer({
     url: "https://utility.arcgis.com/usrsvcs/servers/6c6699e853424b22a8618f00d8e0cf81/rest/services/LiveFeeds/Hurricane_Active/MapServer",
@@ -361,10 +375,10 @@
     "ADCP Stations": adcpStations,
     "Gulf of Mexico Coastal Ocean Observation System": gcoosAssets,
     "Stones MetOcean Observatory": stonesDataLayer,
-    "Current Hurricane": activeHurricaneESRI,
+    "Current Hurricane (<a href='https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer/legend' target='_blank'>*legend</a>)": activeHurricane,
     "Recent Hurricanes/Tropical Storms": recentHurricaneESRI,
     "Historic Hurricane Track: H4(Yellow), H5(Red)": histHurricaneTrack,
-    "NOAA NWS NCEP Global Real-Time Ocean Forecast System (RTOFS)": currentsNOAA,
+    "NOAA NWS NCEP Global Real-Time Ocean Forecast System (RTOFS) (<a href='https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/guidance_model_ocean_grtofs_time/MapServer' target='_blank'>*background</a>)": currentsNOAA,
   };
   var controlLayers = L.control
     .layers(basemapLayers, groupedOverlay, {
