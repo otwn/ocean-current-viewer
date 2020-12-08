@@ -281,15 +281,18 @@
     },
   });
   gcoosAssets.bindPopup(function (layer) {
-    return L.Util.template(
-      "<h2>{station}</h2><h3>{organization}</h3>" +
-      "<table>" +
-      "<tr><td>URN: </td><td>{urn}</td></tr>" +
-      "<tr><td>Description: </td><td>{description}</td></tr>" +
-      "</table>",
-      layer.feature.properties
-    );
-  });
+        // console.log(layer);
+        var url = layer.feature.properties.urn.substring(4,)
+        return L.Util.template(
+          "<h3>{station}</h3><h4>{organization}</h4>" +
+          "<table>" +
+          "<tr><td>URN: </td><td>{urn}</td></tr>" +
+          "<tr><td>Description: </td><td>{description}</td></tr>" +
+          "<tr><td>Link: <a href='https://data.gcoos.org/monitoring.php?station=" + url + "' target='_blank'>Open</a></td></tr>" + 
+          "</table>",
+          layer.feature.properties
+        );
+      });
 
   var currentsIcon = L.divIcon({
     className: "currents-div-icon",
@@ -311,6 +314,7 @@
       "<table>" +
       "<tr><td>URN: </td><td>{urn}</td></tr>" +
       "<tr><td>Description: </td><td>{description}</td></tr>" +
+      "<tr><td>Link: <a href='https://data.gcoos.org/monitoring.php?station={urn}' target='_blank'>Open</a></td></tr>" + 
       "</table>",
       layer.feature.properties
     );
@@ -319,31 +323,6 @@
   var singleStationIcon = L.divIcon({
     className: "single-station-div-icon",
   });
-  // var singleStation = [];
-  // var resultLayer = L.esri
-  //   .query({
-  //     url: "https://gis.gcoos.org/arcgis/rest/services/Stations/The_GCOOS_Region/FeatureServer/0"
-  //   })
-  //   .where("station='42395'")
-  //   .run(function (error, oneStation) {
-  //     singleStation = L.geoJSON(oneStation, {
-  //       pointToLayer: function (feature, latlng) {
-  //         return L.marker(latlng, {
-  //           icon: singleStationIcon
-  //         });
-  //       }
-  //     });
-  //     singleStation.bindPopup(function (layer) {
-  //       return L.Util.template(
-  //         "<h1>{station}</h1><h2>{organization}</h2>" +
-  //         "<table>" +
-  //         "<tr><td>URN: </td><td>{urn}</td></tr>" +
-  //         "<tr><td>Description: </td><td>{description}</td></tr>" +
-  //         "</table>",
-  //         layer.feature.properties
-  //       );
-  //     });
-  //   });
   var stonesDataLayer = L.esri.featureLayer({
     url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/ArcGIS/rest/services/Gulf_Ocean_Currents_Observing_Stations/FeatureServer/0",
     pointToLayer: function (feature, latlng) {
@@ -373,7 +352,7 @@
   // ================================================================
   var groupedOverlay = {
     "ADCP Stations": adcpStations,
-    "Gulf of Mexico Coastal Ocean Observation System": gcoosAssets,
+    "Gulf of Mexico Coastal Ocean Observing System": gcoosAssets,
     "Stones MetOcean Observatory": stonesDataLayer,
     "Current Hurricane (<a href='https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer/legend' target='_blank'>*legend</a>)": activeHurricane,
     "Recent Hurricanes/Tropical Storms": recentHurricaneESRI,
