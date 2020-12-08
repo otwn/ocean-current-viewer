@@ -335,7 +335,7 @@
   stonesDataLayer.setWhere("station='42395'");
   stonesDataLayer.bindPopup(function (layer) {
     return L.Util.template(
-      "<h2>{station}</h2><h3></h3>{organization}</h3>" +
+      "<h2>{station}</h2><h3>{organization}</h3>" +
       "<table>" +
       "<tr><td>URN: </td><td>{urn}</td></tr>" +
       "<tr><td>Description: </td><td>{description}</td></tr>" +
