@@ -71,8 +71,7 @@
   // ================================================================
   // Ancillary Data Layers - Top Corner Layers Group
   // ================================================================
-
-  // var proxy = "proxy.php";
+  var proxy = "proxy.php";
   // var hf6kmWMS =
   //   "https://hfrnet-tds.ucsd.edu/thredds/wms/HFR/USEGC/6km/hourly/GNOME/HFRADAR,_US_East_and_Gulf_Coast,_6km_Resolution,_Hourly_RTV_(GNOME)_best.ncd";
   // var hfradar6kmLayer = L.nonTiledLayer.wms(hf6kmWMS, {
@@ -192,80 +191,83 @@
     }
   });
 
-  var recentHurricaneESRI = L.esri.dynamicMapLayer({
-    url: "https://utility.arcgis.com/usrsvcs/servers/c10892ebdbf8428e939f601c2acae7e4/rest/services/LiveFeeds/Hurricane_Recent/MapServer",
-    f: "image/png",
-  });
-  recentHurricaneESRI.bindPopup(function (error, featureCollection) {
-    if (error || featureCollection.features.length === 0) {
-      return false;
-    } else {
-      console.log(featureCollection);
-      ppt = featureCollection.features[2].properties;
-      popup =
-        "Name: " +
-        ppt.STORMNAME +
-        "<br>" +
-        "Storm Type: " +
-        ppt.STORMTYPE +
-        "<br>" +
-        "Storm ID: " +
-        ppt.STORMID +
-        "<br>" +
-        "Date: " +
-        ppt.DTG +
-        "<br>" +
-        "Intensity: " +
-        ppt.INTENSITY +
-        " knots<br>" +
-        ppt.INTENSITY * 1.151 +
-        " mph/ " +
-        ppt.INTENSITY * 1.852 +
-        " kmh <br>" +
-        "Latitude/Longitude: " +
-        ppt.LAT +
-        "/" +
-        ppt.LON +
-        "<br>";
-      return popup;
+  var recentHurricaneESRI = L.esri.featureLayer({
+    url:
+      "https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Recent_Hurricanes_v1/FeatureServer/1",
+    style: function(feature){
+      // console.log(feature);
+      var c, w, o = 0.75;
+      if (feature.properties.STORMTYPE == "Hurricane5"){
+        c = "#000000";
+        w = 10
+      }
+      if (feature.properties.STORMTYPE == "Hurricane4"){
+        c = "rgb(230,0,0)";
+        w = 8
+      }
+      if (feature.properties.STORMTYPE == "Hurricane3"){
+        c = "rgb(255,170,0)";
+        w = 7
+      }
+      if (feature.properties.STORMTYPE == "Hurricane2"){
+        c = "rgb(255,255,0)";
+        w = 6
+      }
+      if (feature.properties.STORMTYPE == "Hurricane1"){
+        c = "rgb(85,255,0)";
+        w = 5
+      }
+      if (feature.properties.STORMTYPE == "Tropical Storm"){
+        c = "rgb(0, 197,255)";
+        w = 4
+      }
+      if (feature.properties.STORMTYPE == "Tropical Depression"){
+        c = "rgb(255,115,223)";
+        w = 3
+      }
+      return {
+        color: c,
+        opacity: o,
+        weight: w
+      };
     }
+  });
+  recentHurricaneESRI.bindPopup(function(layer) {
+    return L.Util.template(
+      "<b>Name: {STORMNAME}</b><br>Category: {STORMTYPE}",
+      layer.feature.properties
+    );
   });
 
   var histHurricaneTrack = L.esri.featureLayer({
-    url: "https://services1.arcgis.com/VAI453sU9tG9rSmh/arcgis/rest/services/Historic_Major_Hurricane_Tracks/FeatureServer/0",
+    url:
+      "https://services1.arcgis.com/VAI453sU9tG9rSmh/arcgis/rest/services/Historic_Major_Hurricane_Tracks/FeatureServer/0",
     where: "wmo_wind > 95",
-    style: function (feature) {
-      var c,
-        w,
-        o = 0.75;
-
+    style: function(feature) {
+      var c, w, o = 0.75;
       if (feature.properties.wmo_wind >= 137) {
-        c = "#FF0000";
+        c = "rgb(0,0,0)";
         w = 5;
       }
       if (
         feature.properties.wmo_wind < 136 &&
         feature.properties.wmo_wind >= 112
       ) {
-        c = "#FFEB00";
-        w = 3;
+        c = "rgb(230,0,0)";
+        w = 4;
       }
       return {
         color: c,
         opacity: o,
-        weight: w,
+        weight: w
       };
-    },
+    }
   });
-  histHurricaneTrack.bindPopup(function (layer) {
+  histHurricaneTrack.bindPopup(function(layer) {
     return L.Util.template(
-      "<b>Historic Major Hurricane Tracks</b><hr><b>{Name}</b><br>{ISO_time}<br>Wind Speed: {wmo_wind} kt",
+      "<b>Historic Hurricane Tracks</b><br>Category 5: Black<br>Category 4: Red<hr><b>{Name}</b><br>{ISO_time}<br>Wind Speed: {wmo_wind} kt",
       layer.feature.properties
     );
-  });
-
-  var currentsNOAA = L.esri.dynamicMapLayer({
-    url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/guidance_model_ocean_grtofs_time/MapServer",
   });
 
   var stationIcon = L.divIcon({
@@ -356,8 +358,7 @@
     "Stones MetOcean Observatory": stonesDataLayer,
     "Current Hurricane (<a href='https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer/legend' target='_blank'>*legend</a>)": activeHurricane,
     "Recent Hurricanes/Tropical Storms": recentHurricaneESRI,
-    "Historic Hurricane Track: H4(Yellow), H5(Red)": histHurricaneTrack,
-    "NOAA NWS NCEP Global Real-Time Ocean Forecast System (RTOFS) (<a href='https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/guidance_model_ocean_grtofs_time/MapServer' target='_blank'>*background</a>)": currentsNOAA,
+    "Historic Hurricane Track: H4(Yellow), H5(Red)": histHurricaneTrack
   };
   var controlLayers = L.control
     .layers(basemapLayers, groupedOverlay, {
