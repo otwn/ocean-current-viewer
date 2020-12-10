@@ -71,125 +71,35 @@
   // ================================================================
   // Ancillary Data Layers - Top Corner Layers Group
   // ================================================================
-  var proxy = "proxy.php";
-  // var hf6kmWMS =
-  //   "https://hfrnet-tds.ucsd.edu/thredds/wms/HFR/USEGC/6km/hourly/GNOME/HFRADAR,_US_East_and_Gulf_Coast,_6km_Resolution,_Hourly_RTV_(GNOME)_best.ncd";
-  // var hfradar6kmLayer = L.nonTiledLayer.wms(hf6kmWMS, {
-  //   layers: "surface_sea_water_velocity",
-  //   format: "image/png",
-  //   transparent: true,
-  //   styles: "linevec/rainbow",
-  //   markerscale: 15,
-  //   markerspacing: 6,
-  //   numcolorbands: 10,
-  //   abovemaxcolor: "extend",
-  //   belowmincolor: "extend",
-  //   colorscalerange: "0,1.5",
-  //   attribution: "HF RADAR",
-  // });
-  // var tdhfradar6kmLayer = L.timeDimension.layer
-  //   .wms(hfradar6kmLayer, {
-  //     proxy: proxy,
-  //     cache: 25,
-  //     cacheBackward: 25,
-  //     cacheForward: 25,
-  //     updateTimeDimension: false,
-  //   })
-  //   .addTo(map);
-
-  // // HFRadar 2km Hourly
-  // var hf2kmWMS =
-  //   "https://hfrnet-tds.ucsd.edu/thredds/wms/HFR/USEGC/2km/hourly/GNOME/HFRADAR,_US_East_and_Gulf_Coast,_2km_Resolution,_Hourly_RTV_(GNOME)_best.ncd";
-  // var hfradar2kmLayer = L.nonTiledLayer.wms(hf2kmWMS, {
-  //   layers: "surface_sea_water_velocity",
-  //   format: "image/png",
-  //   transparent: true,
-  //   styles: "linevec/rainbow",
-  //   markerscale: 15,
-  //   markerspacing: 6,
-  //   numcolorbands: 10,
-  //   abovemaxcolor: "extend",
-  //   belowmincolor: "extend",
-  //   colorscalerange: "0,1.5",
-  //   attribution: "HF RADAR",
-  // });
-  // var tdhfradar2kmLayer = L.timeDimension.layer.wms(hfradar2kmLayer, {
-  //   proxy: proxy,
-  //   cache: 25,
-  //   cacheBackward: 25,
-  //   cacheForward: 25,
-  //   updateTimeDimension: false,
-  // });
-
-  // // HFRadar 1km Hourly
-  // var hf1kmWMS =
-  //   "https://hfrnet-tds.ucsd.edu/thredds/wms/HFR/USEGC/1km/hourly/GNOME/HFRADAR,_US_East_and_Gulf_Coast,_1km_Resolution,_Hourly_RTV_(GNOME)_best.ncd";
-  // var hfradar1kmLayer = L.nonTiledLayer.wms(hf1kmWMS, {
-  //   layers: "surface_sea_water_velocity",
-  //   format: "image/png",
-  //   transparent: true,
-  //   styles: "linevec/rainbow",
-  //   markerscale: 15,
-  //   markerspacing: 6,
-  //   numcolorbands: 10,
-  //   abovemaxcolor: "extend",
-  //   belowmincolor: "extend",
-  //   colorscalerange: "0,1.5",
-  //   attribution: "HF RADAR",
-  // });
-  // var tdhfradar1kmLayer = L.timeDimension.layer.wms(hfradar1kmLayer, {
-  //   proxy: proxy,
-  //   cache: 25,
-  //   cacheBackward: 25,
-  //   cacheForward: 25,
-  //   updateTimeDimension: false,
-  // });
-
-  var activeHurricane = L.esri.dynamicMapLayer({
-    url: "https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer",
-    opacity: 0.9
+  const forecastPosition = L.esri.featureLayer({
+    url:"https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/0"
+  });
+  const observedPosition = L.esri.featureLayer({
+    url:"https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/1"
+  });
+  const forecastTrack = L.esri.featureLayer({
+    url:"https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/2"
+  });
+  const observedTrack = L.esri.featureLayer({
+    url:"https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/3"
+  });
+  const forecastErrorCone = L.esri.featureLayer({
+    url:"https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/4"
+  });
+  const watchesWarnings = L.esri.featureLayer({
+    url:"https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_v1/FeatureServer/5"
   });
 
-  var activeHurricaneESRI = L.esri.dynamicMapLayer({
-    url: "https://utility.arcgis.com/usrsvcs/servers/6c6699e853424b22a8618f00d8e0cf81/rest/services/LiveFeeds/Hurricane_Active/MapServer",
-    f: "image/png",
-    transparent: true,
-    opacity: 0.7,
+  var activeHurricane = L.featureGroup([forecastPosition, observedPosition, forecastTrack, observedTrack, forecastErrorCone, watchesWarnings]).addTo(map);     
+  activeHurricane.bindPopup(function(layer){
+    // console.log("layer:", layer);
+    return '<h3>'+layer.feature.properties.STORMNAME+'</h3><h4>Type: '+layer.feature.properties.STORMTYPE+'</h4>';
+  }).on("click", function(e){
+      // console.log("e: ", e);
+      return '<h3>'+e.layer.feature.properties.STORMNAME+'</h3><h4>Type: '+e.layer.feature.properties.STORMTYPE+'</h4>';
+
   });
-  activeHurricaneESRI.bindPopup(function (error, featureCollection) {
-    if (error || featureCollection.features.length === 0) {
-      return false;
-    } else {
-      console.log(featureCollection);
-      ppt = featureCollection.features[2].properties;
-      popup =
-        "Name: " +
-        ppt.STORMNAME +
-        "<br>" +
-        "Storm Type: " +
-        ppt.STORMTYPE +
-        "<br>" +
-        "Storm ID: " +
-        ppt.STORMID +
-        "<br>" +
-        "Date: " +
-        ppt.DTG +
-        "<br>" +
-        "Intensity: " +
-        ppt.INTENSITY +
-        " knots<br>" +
-        ppt.INTENSITY * 1.151 +
-        " mph/ " +
-        ppt.INTENSITY * 1.852 +
-        " kmh <br>" +
-        "Latitude/Longitude: " +
-        ppt.LAT +
-        "/" +
-        ppt.LON +
-        "<br>";
-      return popup;
-    }
-  });
+
 
   var recentHurricaneESRI = L.esri.featureLayer({
     url:
@@ -270,6 +180,7 @@
     );
   });
 
+  /* GCOOS Stations */
   var stationIcon = L.divIcon({
     className: "station-div-icon",
   });
@@ -281,73 +192,75 @@
         riseOnHover: true,
       });
     },
-  });
+    ignoreRenderer: true
+  }).addTo(map);
   gcoosAssets.bindPopup(function (layer) {
-        // console.log(layer);
-        var url = layer.feature.properties.urn.substring(4,)
-        return L.Util.template(
-          "<h3>{station}</h3><h4>{organization}</h4>" +
-          "<table>" +
-          "<tr><td>URN: </td><td>{urn}</td></tr>" +
-          "<tr><td>Description: </td><td>{description}</td></tr>" +
-          "<tr><td>Link: <a href='https://data.gcoos.org/monitoring.php?station=" + url + "' target='_blank'>Open</a></td></tr>" + 
-          "</table>",
-          layer.feature.properties
-        );
-      });
-
-  var currentsIcon = L.divIcon({
-    className: "currents-div-icon",
-  });
-  var adcpStations = L.esri
-    .featureLayer({
-      url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/ArcGIS/rest/services/Gulf_Ocean_Currents_Observing_Stations/FeatureServer/0",
-      pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, {
-          icon: currentsIcon,
-          riseOnHover: true,
-        });
-      },
-    })
-    .addTo(map);
-  adcpStations.bindPopup(function (layer) {
+    // console.log(layer);
+    var url = layer.feature.properties.urn.substring(4,)
     return L.Util.template(
-      "<h2>{station}</h2><h3>{organization}</h3>" +
+      "<h3>{station}</h3><h4>{organization}</h4>" +
       "<table>" +
       "<tr><td>URN: </td><td>{urn}</td></tr>" +
       "<tr><td>Description: </td><td>{description}</td></tr>" +
-      "<tr><td>Link: <a href='https://data.gcoos.org/monitoring.php?station={urn}' target='_blank'>Open</a></td></tr>" + 
+      "<tr><td>Link: <a href='https://data.gcoos.org/monitoring.php?station=" + url + "' target='_blank'>Open</a></td></tr>" + 
       "</table>",
       layer.feature.properties
     );
   });
 
-  var singleStationIcon = L.divIcon({
-    className: "single-station-div-icon",
+  var currentsIcon = L.divIcon({
+      className: "currents-div-icon",
   });
-  var stonesDataLayer = L.esri.featureLayer({
-    url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/ArcGIS/rest/services/Gulf_Ocean_Currents_Observing_Stations/FeatureServer/0",
-    pointToLayer: function (feature, latlng) {
-      return L.marker(latlng, {
-        icon: singleStationIcon,
-        riseOnHover: true,
-      });
-    },
-  });
-  stonesDataLayer.setWhere("station='42395'");
-  stonesDataLayer.bindPopup(function (layer) {
+  var adcpStations = L.esri.featureLayer({
+      url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/ArcGIS/rest/services/Gulf_Ocean_Currents_Observing_Stations/FeatureServer/0",
+      pointToLayer: function (feature, latlng) {
+          return L.marker(latlng, {
+              icon: currentsIcon,
+              riseOnHover: true,
+          });
+      },
+      ignoreRenderer: true
+  }).addTo(map);
+  adcpStations.bindPopup(function (layer) {
+    var url = layer.feature.properties.urn
     return L.Util.template(
-      "<h2>{station}</h2><h3>{organization}</h3>" +
+      "<h3>{station}</h3><h4>{organization}</h4>" +
       "<table>" +
       "<tr><td>URN: </td><td>{urn}</td></tr>" +
       "<tr><td>Description: </td><td>{description}</td></tr>" +
-      "</table>" +
-      "<br>" +
-      "<a href='https://stonesdata.tamucc.edu/browse_atm.php' target='_blank'>Stones MetOcean Observatory</a>",
+      "<tr><td>Link: <a href='https://data.gcoos.org/monitoring.php?station=" + url + "' target='_blank'>Open</a></td></tr>" + 
+      "</table>",
       layer.feature.properties
     );
   });
-  stonesDataLayer.addTo(map);
+
+      var singleStationIcon = L.divIcon({
+          className: "single-station-div-icon",
+      });
+      var stonesDataLayer = L.esri.featureLayer({
+          url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/ArcGIS/rest/services/Gulf_Ocean_Currents_Observing_Stations/FeatureServer/0",
+          pointToLayer: function (feature, latlng) {
+              return L.marker(latlng, {
+                  icon: singleStationIcon,
+                  riseOnHover: true,
+              });
+          },
+          ignoreRenderer: true,
+      }).addTo(map);
+      stonesDataLayer.setWhere("station='42395'");
+      // stonesDataLayer.addTo(map);
+      stonesDataLayer.bindPopup(function (layer) {
+          return L.Util.template(
+              "<h3>{station}</h3><h4>{organization}</h4>" +
+              "<table>" +
+              "<tr><td>URN: </td><td>{urn}</td></tr>" +
+              "<tr><td>Description: </td><td>{description}</td></tr>" +
+              "</table>" +
+              "<br>" +
+              "<a href='https://stonesdata.tamucc.edu/browse_atm.php' target='_blank'>Stones MetOcean Observatory</a>",
+              layer.feature.properties
+          );
+      });
 
   // ================================================================
   /* grouping ancillary data layers */
@@ -356,9 +269,9 @@
     "ADCP Stations": adcpStations,
     "Gulf of Mexico Coastal Ocean Observing System": gcoosAssets,
     "Stones MetOcean Observatory": stonesDataLayer,
-    "Current Hurricane (<a href='https://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/wwa_meteocean_tropicalcyclones_trackintensityfcsts_time/MapServer/legend' target='_blank'>*legend</a>)": activeHurricane,
+    'Active Hurricane <img style="height:400px;" src="https://geo.gcoos.org/data/images/hurricane_legend.png" />': activeHurricane,
     "Recent Hurricanes/Tropical Storms": recentHurricaneESRI,
-    "Historic Hurricane Track: H4(Yellow), H5(Red)": histHurricaneTrack
+    "Historic Hurricane Track": histHurricaneTrack
   };
   var controlLayers = L.control
     .layers(basemapLayers, groupedOverlay, {
@@ -402,7 +315,7 @@
           },
           data: data,
           maxVelocity: 2.5,
-          velocityScale: 0.1, // arbitrary default 0.005
+          velocityScale: 0.2, // arbitrary default 0.005
         }).addTo(map);
 
         controlLayers.addOverlay(velocityLayer, "HYCOM Ocean Current");
