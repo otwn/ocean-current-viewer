@@ -16,8 +16,8 @@ body,
 }
 
 .station-div-icon {
-    width: 10px !important;
-    height: 10px !important;
+    width: 9px !important;
+    height: 9px !important;
     background: yellowgreen;
     border: 1px solid rgba(240, 240, 240, 0.5);
     color: blue;
@@ -29,6 +29,8 @@ body,
 }
 
 .currents-div-icon {
+    width: 8px !important;
+    height: 8px !important;
     background: orangered;
     border: 1px solid rgba(240, 240, 240, 0.5);
     color: blue;
@@ -37,9 +39,12 @@ body,
     border-radius: 50%;
     line-height: 50px;
     opacity: 0.8;
+    z-index: 1500 !important;
 }
 
 .single-station-div-icon {
+    width: 10px !important;
+    height: 10px !important;
     background: yellow;
     border: 1px solid rgba(240, 240, 240, 0.5);
     color: blue;
